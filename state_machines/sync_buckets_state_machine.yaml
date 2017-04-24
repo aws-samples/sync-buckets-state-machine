@@ -1,0 +1,157 @@
+# Copyright 2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# Licensed under the Apache License, Version 2.0 (the "License").
+# You may not use this file except in compliance with the License.
+# A copy of the License is located at
+#
+#     http://aws.amazon.com/apache2.0/
+#
+# or in the "license" file accompanying this file.
+# This file is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and limitations under the License.
+
+#
+# Note: This Amazon Step Functions state machine definition file is not complete yet: All resources are Lambda function
+# names that need to be resolved into their ARNs. This is done by the fabfile.py Python script in the main directory.
+#
+
+Comment: Synchronize two Amazon S3 buckets.
+StartAt: FindBucketRegions
+TimeoutSeconds: 1800  # 30 minutes, in seconds.
+States:
+    FindBucketRegions:
+        Type: Parallel
+        Branches:
+            -
+                StartAt: FindRegionForSourceBucket
+                States:
+                    FindRegionForSourceBucket:
+                        Type: Task
+                        Resource: get_bucket_location
+                        InputPath: '$.source'
+                        ResultPath: '$.sourceRegion'
+                        OutputPath: '$'
+                        TimeoutSeconds: 15  # Lambda function has 10 seconds, add 5 to be sure.
+                        End: true
+            -
+                StartAt: FindRegionForDestinationBucket
+                States:
+                    FindRegionForDestinationBucket:
+                        Type: Task
+                        Resource: get_bucket_location
+                        InputPath: '$.destination'
+                        ResultPath: '$.destinationRegion'
+                        OutputPath: '$'
+                        TimeoutSeconds: 15  # Lambda function has 10 seconds, add 5 to be sure.
+                        End: true
+        InputPath: '$'
+        ResultPath: '$'
+        OutputPath: '$'
+        Next: CombineRegionOutputs
+    CombineRegionOutputs:
+        Type: Task
+        Resource: combine_dicts
+        InputPath: '$'
+        ResultPath: '$'
+        OutputPath: '$'
+        TimeoutSeconds: 15
+        Next: ValidateInput
+    ValidateInput:
+        Type: Task
+        Resource: validate_input
+        InputPath: '$'
+        ResultPath: '$.regionsAreSame'
+        OutputPath: '$'
+        TimeoutSeconds: 15
+        Next: ConfirmInputValid
+    ConfirmInputValid:
+        Type: Choice
+        Choices:
+            -
+                Variable: "$.regionsAreSame"
+                BooleanEquals: true
+                Next: ProcessBuckets
+        Default: BucketRegionsNotEqualFailure
+    BucketRegionsNotEqualFailure:
+        Type: Fail
+        Error: BucketRegionsNotEqualError
+        Cause: "The source and destination buckets have different regions. This is currently not supported."
+    ProcessBuckets:
+        Type: Parallel
+        Branches:
+            -
+                StartAt: InjectSourceBucket
+                States:
+                    InjectSourceBucket:
+                        Type: Pass
+                        Result: 'source'
+                        ResultPath: '$.listBucket'
+                        OutputPath: '$'
+                        Next: UpdateSourceKeyList
+                    UpdateSourceKeyList:
+                        Type: Task
+                        Resource: list_bucket
+                        InputPath: '$'
+                        ResultPath: '$.listResult'
+                        OutputPath: '$'
+                        TimeoutSeconds: 65
+                        Next: CopySourceKeys
+                    CopySourceKeys:
+                        Type: Task
+                        Resource: copy_keys
+                        InputPath: '$'
+                        ResultPath: null
+                        OutputPath: '$'
+                        TimeoutSeconds: 305
+                        Next: EvaluateCopyListToken
+                    EvaluateCopyListToken:
+                        Type: Choice
+                        Choices:
+                            -
+                                Not:
+                                    Variable: '$.listResult.token'
+                                    StringEquals: ''
+                                Next: UpdateSourceKeyList
+                        Default: FinishCopyBranch
+                    FinishCopyBranch:
+                        Type: Pass
+                        End: true
+            -
+                StartAt: InjectDestinationBucket
+                States:
+                    InjectDestinationBucket:
+                        Type: Pass
+                        Result: 'destination'
+                        ResultPath: '$.listBucket'
+                        OutputPath: '$'
+                        Next: UpdateDestinationKeyList
+                    UpdateDestinationKeyList:
+                        Type: Task
+                        Resource: list_bucket
+                        InputPath: '$'
+                        ResultPath: '$.listResult'
+                        OutputPath: '$'
+                        TimeoutSeconds: 65
+                        Next: DeleteOrphanedKeys
+                    DeleteOrphanedKeys:
+                        Type: Task
+                        Resource: delete_orphaned_keys
+                        InputPath: '$'
+                        ResultPath: null
+                        OutputPath: '$'
+                        TimeoutSeconds: 305
+                        Next: EvaluateDestinationListToken
+                    EvaluateDestinationListToken:
+                        Type: Choice
+                        Choices:
+                            -
+                                Not:
+                                    Variable: '$.listResult.token'
+                                    StringEquals: ''
+                                Next: UpdateDestinationKeyList
+                        Default: FinishDeleteBranch
+                    FinishDeleteBranch:
+                        Type: Pass
+                        End: true
+        Next: Success
+    Success:
+        Type: Succeed
