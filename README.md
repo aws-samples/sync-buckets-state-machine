@@ -44,18 +44,14 @@ damage, please use it only with Amazon S3 buckets that contain purely test and d
 
 * *lambda_functions*: All AWS Lambda functions are stored here. They contain YAML front matter with their configuration.
 * *state_machines*: All AWS Step Functions state machine definitions are stored here in YAML.
-* *Config*: Octane config for this project.
 * *fabfile.py*: Python fabric file that builds a CloudFormation stack with all Lambda functions and their configuration.
   It extracts configuration information from each Lambda function source file's YAML front matter and uses it to
   generate AWS CloudFormation snippets for the AWS Serverless Application Model (SAM) to simplify deployment.
-  It also creates an IAM Role resource in the CloudFormation template for the Step Functions state machine. After
-  creating or updating the CloudFormation stack, it proceeds to create/update the Step Functions state machine, using
-  a timestamp suffix to distinguish different state machine versions from each other.
-* *README*: This file.
+  It also creates resources in CloudFormation for an IAM Role and for the Step Functions state machine.
+  After creating the CloudFormation template, the fabfile will create or update the corresponding stack in your account.
+* *README.md*: This file.
 * *requirements.txt*: Python requirements for this project.
    
 ## Feedback
 
-Please send feedback, suggestions, etc. to glez@amazon.de (Constantin Gonzalez, https://phonetool.amazon.com/users/glez)
-
-
+Please send feedback, suggestions, etc. to Constantin Gonzalez, glez@amazon.de
