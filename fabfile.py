@@ -466,7 +466,7 @@ def generate_state_machine_cfn_template(state_machine_name):
 
     result_template['Resources'][state_machine_logical_name] = state_machine_template
 
-    output_name = state_machine_logical_name + 'Arn'
+    output_name = state_machine_logical_name + 'Name'
     output_template = json.loads(json.dumps(CFN_TEMPLATE_OUTPUT))
     output_template['Description'] = 'Name for State Machine: ' + state_machine_logical_name
     output_template['Value']['Fn::GetAtt'][0] = state_machine_logical_name
@@ -635,6 +635,31 @@ def update_cfn_stack():
         execute_cfn_change_set(change_set_id)
 
 
+def get_state_machine_names():
+    stack_output_list = get_cfn_stack_info()['Outputs']
+    stack_output_dict = {}
+    for output in stack_output_list:
+        stack_output_dict[output['OutputKey']] = output['OutputValue']
+
+    result = []
+    for state_machine_name in state_machines.keys():
+        result.append(stack_output_dict[to_camel_case(state_machine_name) + 'Name'])
+
+    return result
+
+
+def print_state_machine_names():
+    names = get_state_machine_names()
+    if len(names) == 0:
+        return
+    elif len(names) == 1:
+        print('State machine name: ' + names[0])
+    else:
+        print('State machine names:')
+        for name in get_state_machine_names():
+            print '    ' + name
+            
+
 # Main
 
 @task(default=True)
@@ -644,3 +669,4 @@ def deploy():
     populate_state_machines_dict()
     update_lambda_function_packages()
     update_cfn_stack()
+    print_state_machine_names()
