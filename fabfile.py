@@ -635,6 +635,37 @@ def update_cfn_stack():
         execute_cfn_change_set(change_set_id)
 
 
+def delete_cfn_stack():
+    info = get_cfn_stack_info()
+
+    if info is None:
+        status = 'NOT_EXIST'
+    else:
+        status = info['StackStatus']
+
+    if status == 'DELETE_IN_PROGRESS':
+        print('CloudFormation stack ' + CFN_STACK_NAME + ' is already being deleted.')
+        return
+    elif status == 'DELETE_FAILED':
+        print(
+            'CloudFormation stack ' + CFN_STACK_NAME + ' deletion failed. Please investigate through the AWS console.'
+        )
+        return
+    elif status in ['NOT_EXIST', 'CREATE_FAILED', 'DELETE_COMPLETE']:
+        print('CloudFormation stack ' + CFN_STACK_NAME + ' does not exist (status: ' + status + '). Nothing to delete.')
+        return
+    else:
+        print('Warning: This will delete the ' + CFN_STACK_NAME + ' CloudFormation stack and all its resources.')
+        response = raw_input('To continue, please type "delete": ')
+        if response == 'delete':
+            print('Deleting CloudFormation stack: ' + CFN_STACK_NAME)
+            cfn = boto3.client('cloudformation', region_name=AWS_DEFAULT_REGION)
+            cfn.delete_stack(StackName=CFN_STACK_NAME)
+        else:
+            print('Aborting...')
+            return
+
+
 def get_state_machine_names():
     stack_output_list = get_cfn_stack_info()['Outputs']
     stack_output_dict = {}
@@ -658,7 +689,7 @@ def print_state_machine_names():
         print('State machine names:')
         for name in get_state_machine_names():
             print '    ' + name
-            
+
 
 # Main
 
@@ -670,3 +701,8 @@ def deploy():
     update_lambda_function_packages()
     update_cfn_stack()
     print_state_machine_names()
+
+
+@task()
+def delete():
+    delete_cfn_stack()

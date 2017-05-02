@@ -27,31 +27,57 @@ developed carefully and with the best intentions in mind, there is no guarantee 
 real files** and it **will delete real files** in your Amazon S3 buckets in case it deems so necessary. To avoid any
 damage, please use it only with Amazon S3 buckets that contain purely test and demonstration data.
 
+## Prerequisites
+
+You will need a system with Python 2.7 and virtualenv (https://virtualenv.pypa.io/en/stable/installation/) installed,
+and an AWS account that is configured on your system to be ready to use with the AWS CLI.
+
+(We won't use the AWS CLI but will use the AWS credentials stored in its configuration files.)
+
+## How to install
+
+      > virtualenv env                                              # Create a Python virtual environment.
+      > cd env; . ./bin/activate                                    # Activate the Python virtual environment.
+      > git clone ssh://git.amazon.com/pkg/SyncBucketsStateMachine  # Clone the software from this Git repository.
+      > cd sync-buckets-state-machine
+      > pip install -r requirements.txt                             # This will also install the "fab" utility from http://www.fabfile.org.
+      > cp fabfile_config_template.py fabfile_config.py
+      > vi fabfile_config.py                                        # Fill in your own values.
+      > fab                                                         # Install everything into your AWS account.
+
 ## How to use
 
-1. git clone https://github.com/awslabs/sync-buckets-state-machine
-2. pip install -r requirements.txt  # This should also install the "fab" command-line tool from http://fabfile.org/
-3. cp fabfile_config_template.py fabfile_config.py
-4. vi fabfile_config.py # Fill in your own values.
-5. fab
-6. Start the Amazon Step Functions console in your chosen region and start a new execution with an input like:
-   >    {
-   >        "source": "your-source-bucket-name",
-   >        "destination:" "your-destination-bucket-name"
-   >    }
+Start the Amazon Step Functions console in your chosen region and start a new execution with an input like:
+
+       {
+           "source": "your-source-bucket-name",
+           "destination:" "your-destination-bucket-name"
+       }
+   
+## How to uninstall   
+
+This assumes that you're still working from the sync-buckets-state-machine that you installed into in the steps above.
+   
+      > fab delete                 # Delete the CloudFormation stack and its resources.
+      > deactivate                 # Deactivate the Python virtual environment
+      > cd ../..; /bin/rm -rf env  # Clean up.
    
 ## Files/directories
 
 * *lambda_functions*: All AWS Lambda functions are stored here. They contain YAML front matter with their configuration.
 * *state_machines*: All AWS Step Functions state machine definitions are stored here in YAML.
+* *Config*: Octane config for this project.
 * *fabfile.py*: Python fabric file that builds a CloudFormation stack with all Lambda functions and their configuration.
   It extracts configuration information from each Lambda function source file's YAML front matter and uses it to
   generate AWS CloudFormation snippets for the AWS Serverless Application Model (SAM) to simplify deployment.
-  It also creates resources in CloudFormation for an IAM Role and for the Step Functions state machine.
-  After creating the CloudFormation template, the fabfile will create or update the corresponding stack in your account.
-* *README.md*: This file.
+  It also creates an IAM Role resource in the CloudFormation template for the Step Functions state machine. After
+  creating or updating the CloudFormation stack, it proceeds to create/update the Step Functions state machine, using
+  a timestamp suffix to distinguish different state machine versions from each other.
+* *README*: This file.
 * *requirements.txt*: Python requirements for this project.
    
 ## Feedback
 
-Please send feedback, suggestions, etc. to Constantin Gonzalez, glez@amazon.de
+Please send feedback, suggestions, etc. to glez@amazon.de (Constantin Gonzalez)
+
+
