@@ -29,8 +29,8 @@ damage, please use it only with Amazon S3 buckets that contain purely test and d
 
 ## How to use
 
-1. git clone ssh://git.amazon.com/pkg/SyncBucketsStateMachine
-2. pip install -r requirements.txt
+1. git clone https://github.com/awslabs/sync-buckets-state-machine
+2. pip install -r requirements.txt  # This should also install the "fab" command-line tool from http://fabfile.org/
 3. cp fabfile_config_template.py fabfile_config.py
 4. vi fabfile_config.py # Fill in your own values.
 5. fab
