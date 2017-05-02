@@ -113,6 +113,7 @@ States:
                                 Next: UpdateSourceKeyList
                         Default: FinishCopyBranch
                     FinishCopyBranch:
+                        InputPath: null
                         Type: Pass
                         End: true
             -
@@ -150,6 +151,7 @@ States:
                                 Next: UpdateDestinationKeyList
                         Default: FinishDeleteBranch
                     FinishDeleteBranch:
+                        InputPath: null
                         Type: Pass
                         End: true
         Next: Success
