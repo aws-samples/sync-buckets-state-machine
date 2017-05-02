@@ -36,14 +36,14 @@ and an AWS account that is configured on your system to be ready to use with the
 
 ## How to install
 
-      > virtualenv env                                              # Create a Python virtual environment.
-      > cd env; . ./bin/activate                                    # Activate the Python virtual environment.
-      > git clone ssh://git.amazon.com/pkg/SyncBucketsStateMachine  # Clone the software from this Git repository.
+      > virtualenv env                                                   # Create a Python virtual environment.
+      > cd env; . ./bin/activate                                         # Activate the Python virtual environment.
+      > git clone https://github.com/awslabs/sync-buckets-state-machine  # Clone the software from this Git repository.
       > cd sync-buckets-state-machine
-      > pip install -r requirements.txt                             # This will also install the "fab" utility from http://www.fabfile.org.
+      > pip install -r requirements.txt                                  # This will also install the "fab" utility from http://www.fabfile.org.
       > cp fabfile_config_template.py fabfile_config.py
-      > vi fabfile_config.py                                        # Fill in your own values.
-      > fab                                                         # Install everything into your AWS account.
+      > vi fabfile_config.py                                             # Fill in your own values.
+      > fab                                                              # Install everything into your AWS account.
 
 ## How to use
 
