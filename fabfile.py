@@ -619,7 +619,7 @@ def execute_cfn_change_set(change_set_id):
         print('Status: ' + status)
         if 'StatusReason' in response:
             print('Reason: ' + response['StatusReason'])
-        if status.endswith('FAILED'):
+        if status.endswith('FAILED') or status == 'ROLLBACK_COMPLETE':
             exit(1)
         elif status == 'UNKNOWN':
             print('Stack info:\n' + json.dumps(response, sort_keys=True, indent=4, default=str))
