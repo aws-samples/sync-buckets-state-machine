@@ -102,6 +102,12 @@ States:
                         ResultPath: null
                         OutputPath: '$'
                         TimeoutSeconds: 305
+                        Retry:
+                          -
+                            ErrorEquals: ["Lambda.Unknown", "States.Timeout"]
+                            IntervalSeconds: 0
+                            MaxAttempts: 3
+
                         Next: EvaluateCopyListToken
                     EvaluateCopyListToken:
                         Type: Choice

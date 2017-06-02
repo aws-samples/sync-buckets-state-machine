@@ -43,7 +43,7 @@ import json
 # Constants
 
 DEBUG = False
-THREAD_PARALLELISM = 16  # Empirical value for now. Should find good way to measure/auto-scale this.
+THREAD_PARALLELISM = 10  # Empirical value for now. Should find good way to measure/auto-scale this.
 METADATA_KEYS = [
     'CacheControl',
     'ContentDisposition',
