@@ -51,7 +51,7 @@ Start the Amazon Step Functions console in your chosen region and start a new ex
 
        {
            "source": "your-source-bucket-name",
-           "destination:" "your-destination-bucket-name"
+           "destination": "your-destination-bucket-name"
        }
    
 ## How to uninstall   
