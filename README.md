@@ -49,10 +49,12 @@ and an AWS account that is configured on your system to be ready to use with the
 
 Start the Amazon Step Functions console in your chosen region and start a new execution with an input like:
 
-       {
-           "source": "your-source-bucket-name",
-           "destination": "your-destination-bucket-name"
-       }
+```json
+{
+    "source": "your-source-bucket-name",
+    "destination": "your-destination-bucket-name"
+}
+```
    
 ## How to uninstall   
 
