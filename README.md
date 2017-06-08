@@ -48,6 +48,7 @@ and an AWS account that is configured on your system to be ready to use with the
 ## How to use
 
 Start the Amazon Step Functions console in your chosen region and start a new execution with an input like:
+
 ```json
 {
     "source": "your-source-bucket-name",
