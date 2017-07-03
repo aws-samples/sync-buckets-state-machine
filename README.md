@@ -68,7 +68,6 @@ This assumes that you're still working from the sync-buckets-state-machine that 
 
 * *lambda_functions*: All AWS Lambda functions are stored here. They contain YAML front matter with their configuration.
 * *state_machines*: All AWS Step Functions state machine definitions are stored here in YAML.
-* *Config*: Octane config for this project.
 * *fabfile.py*: Python fabric file that builds a CloudFormation stack with all Lambda functions and their configuration.
   It extracts configuration information from each Lambda function source file's YAML front matter and uses it to
   generate AWS CloudFormation snippets for the AWS Serverless Application Model (SAM) to simplify deployment.
