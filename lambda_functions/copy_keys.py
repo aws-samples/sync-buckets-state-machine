@@ -107,7 +107,9 @@ class KeySynchronizer(Thread):
                 'Key': key
             },
             Bucket=self.destination,
-            Key=key
+            Key=key,
+            MetadataDirective='COPY',
+            TaggingDirective='COPY'
         )
 
     def run(self):
