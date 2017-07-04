@@ -37,6 +37,7 @@ MAX_KEYS = 1024  # Should be a power of two since it may get divided by two a co
 MAX_DATA_SIZE = 32000  # Max. result size: https://docs.aws.amazon.com/step-functions/latest/dg/service-limits.html
 SAFETY_MARGIN = 10.0  # Percent
 MAX_RESULT_LENGTH = int(MAX_DATA_SIZE * (1.0 - (SAFETY_MARGIN / 100.0)))
+PREFIX = '' # Copy objects based on a provided prefix e.g. '/images/'
 
 
 # Globals
@@ -61,10 +62,12 @@ def handler(event, context):
 
     token = event.get('listResult', {}).get('token', '')
     max_keys = event.get('maxKeys', MAX_KEYS)
+    prefix = event.get('prefix', PREFIX)
 
     args = {
         'Bucket': bucket,
-        'MaxKeys': max_keys
+        'MaxKeys': max_keys,
+        'Prefix': prefix
     }
 
     result = {}
