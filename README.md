@@ -55,15 +55,25 @@ Start the Amazon Step Functions console in your chosen region and start a new ex
     "destination": "your-destination-bucket-name"
 }
 ```
-   
+
+Optionally sync based on a prefix:
+
+```json
+{
+    "source": "...",
+    "destination": "...",
+    "prefix": "/images/"
+}
+```
+
 ## How to uninstall   
 
 This assumes that you're still working from the sync-buckets-state-machine that you installed into in the steps above.
-   
+
       > fab delete                 # Delete the CloudFormation stack and its resources.
       > deactivate                 # Deactivate the Python virtual environment
       > cd ../..; /bin/rm -rf env  # Clean up.
-   
+
 ## Files/directories
 
 * *lambda_functions*: All AWS Lambda functions are stored here. They contain YAML front matter with their configuration.
@@ -76,9 +86,7 @@ This assumes that you're still working from the sync-buckets-state-machine that 
   a timestamp suffix to distinguish different state machine versions from each other.
 * *README*: This file.
 * *requirements.txt*: Python requirements for this project.
-   
+
 ## Feedback
 
 Please send feedback, suggestions, etc. to glez@amazon.de (Constantin Gonzalez)
-
-
