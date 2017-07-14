@@ -62,7 +62,7 @@ Optionally sync based on a prefix:
 {
     "source": "...",
     "destination": "...",
-    "prefix": "/images/"
+    "prefix": "images/"
 }
 ```
 
