@@ -66,6 +66,16 @@ Optionally sync based on a prefix:
 }
 ```
 
+Optionally sync after a specific key:
+
+```json
+{
+    "source": "...",
+    "destination": "...",
+    "startAfter": "images/1000"
+}
+```
+
 ## How to uninstall   
 
 This assumes that you're still working from the sync-buckets-state-machine that you installed into in the steps above.

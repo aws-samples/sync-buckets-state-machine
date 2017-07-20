@@ -38,6 +38,7 @@ MAX_DATA_SIZE = 32000  # Max. result size: https://docs.aws.amazon.com/step-func
 SAFETY_MARGIN = 10.0  # Percent
 MAX_RESULT_LENGTH = int(MAX_DATA_SIZE * (1.0 - (SAFETY_MARGIN / 100.0)))
 PREFIX = '' # Copy objects based on a provided prefix e.g. '/images/'
+START_AFTER = '' # List objects after a specific key e.g. '/images/1000'
 
 
 # Globals
@@ -63,11 +64,13 @@ def handler(event, context):
     token = event.get('listResult', {}).get('token', '')
     max_keys = event.get('maxKeys', MAX_KEYS)
     prefix = event.get('prefix', PREFIX)
+    start_after = event.get('startAfter', START_AFTER)
 
     args = {
         'Bucket': bucket,
         'MaxKeys': max_keys,
-        'Prefix': prefix
+        'Prefix': prefix,
+        'StartAfter': start_after
     }
 
     result = {}
