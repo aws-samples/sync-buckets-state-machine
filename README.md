@@ -36,6 +36,7 @@ and an AWS account that is configured on your system to be ready to use with the
 
 ## How to install
 
+      > sudo yum install -y gcc libffi-devel openssl-devel               # Make sure some prerequisites are installed.
       > virtualenv env                                                   # Create a Python virtual environment.
       > cd env; . ./bin/activate                                         # Activate the Python virtual environment.
       > git clone https://github.com/awslabs/sync-buckets-state-machine  # Clone the software from this Git repository.
